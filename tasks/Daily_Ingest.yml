@@ -1,6 +1,6 @@
 ---
     - shell: " rm -rf /tmp/dailyingest.csv "
-    - shell: " echo NODE_NAME,START_TIME,PROTECTED_MB,WRITTEN_MB,DEDUPSAVINGS_MB,COMPSAVINGS_MB,DEDUP_PCT > /tmp/Dailyingest_$(date +'%Y-%m-%d').csv"  
+    - shell: " echo DATE,PROTECTED_GB,WRITTEN_GB,DEDUPSAVINGS_GB,COMPSAVINGS_GB,DEDUP_PCT,COMP_PCT > /tmp/Dailyingest_$(date +'%Y-%m-%d').csv"  
     - name: "To get Container Storage pool space savings"
       dsmadmc:
         command: "SELECT ENTITY as NODE_NAME, s.START_TIME, (CAST(FLOAT((s.bytes_protected))/1024/1024 AS DECIMAL(12,2))) AS PROTECTED_MB, (CAST(FLOAT((s.bytes_written))/1024/1024 AS DECIMAL(12,2))) AS WRITTEN_MB, (CAST(FLOAT((s.dedup_savings))/1024/1024 AS DECIMAL(12,2))) AS DEDUPSAVINGS_MB, (CAST(FLOAT((s.comp_savings))/1024/1024 AS DECIMAL(12,2))) AS COMPSAVINGS_MB, (CAST(FLOAT((s.dedup_savings))/FLOAT((s.bytes_protected))*100 AS DECIMAL(5,2))) AS DEDUP_PCT from summary s WHERE s.bytes_protected<>0 and (activity='BACKUP' or activity='ARCHIVE') and s.START_TIME>=(current_date - 1 days) order by s.start_time > /tmp/dailyingest.csv"
