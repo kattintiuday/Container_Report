@@ -11,3 +11,5 @@
       - include: tasks/node_backups_24hours.yml
 
       - include: tasks/Daily_Ingest.yml
+
+      - include: tasks/Nodes_Best_Savings.yml
