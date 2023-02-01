@@ -1,0 +1,8 @@
+---  
+  - name: "Playing with Ansible and Git"
+    hosts: localhost
+    connection: local
+    tasks:
+      - include: tasks/Container_Space_Savings.yml
+
+      - include: tasks/Container_Space_Savings_Per.yml

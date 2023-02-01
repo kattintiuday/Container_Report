@@ -1,0 +1,16 @@
+---
+    - shell: " rm -rf /tmp/Container_Space_savings_per.csv "
+    - shell: " echo NAME,SPACE_SAVED_PCT,SPACE_SAVED_MB,USED_SPACE,DEDUP_SAVED_MB,DEDUP_SAVED_PCT,COMP_SAVED_MB,COMP_SAVED_PCT > /tmp/Container_Space_savings_Percentage_$(date +'%Y-%m-%d').csv"  
+    - name: "To get Container Storage pool space savings With Percentage"
+      dsmadmc:
+        command: " select name, SPACE_SAVED_PCT, SPACE_SAVED_MB, USED_SPACE, DEDUP_SAVED_MB, DEDUP_SAVED_PCT, COMP_SAVED_MB, COMP_SAVED_PCT from TSMGUI_ALLSTG_GRID where STG_TYPE=101 or STG_TYPE=100 order by SPACE_SAVED_PCT DESC > /tmp/Container_Space_savings_per.csv"
+        se: "{{ lookup('csvfile', 'Server file=credentials.csv delimiter=,') }}"
+        id: "{{ lookup('csvfile', 'ID file=credentials.csv delimiter=,') }}"
+        pa: "{{ lookup('csvfile', 'Password file=credentials.csv delimiter=,') }}"
+        dataonly: true
+        comma: true
+      register: output
+    - debug: 
+        msg: "{{output.stdout_lines}}"
+    - shell: " cat /tmp/Container_Space_savings_per.csv >> /tmp/Container_Space_savings_Percentage_$(date +'%Y-%m-%d').csv "
+    - shell: " rm -rf /tmp/Container_Space_savings_per.csv "

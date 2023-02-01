@@ -1,0 +1,16 @@
+---
+    - shell: " rm -rf /tmp/Container_Space_savings.csv "
+    - shell: " echo STGPOOL_NAME,TOTAL_SAVED_GB,DEDUP_SAVED_GB,COMP_SAVED_GB,USED_SPACE_GB > /tmp/Container_Space_savings_$(date +'%Y-%m-%d').csv"  
+    - name: "To get Container Storage pool space savings"
+      dsmadmc:
+        command: "select STGPOOL_NAME, (CAST(SPACE_SAVED_MB as FLOAT)/1024) as TOTAL_SAVED_GB, (CAST(DEDUP_SPACE_SAVED_MB as FLOAT)/1024) as DEDUP_SAVED_GB, (CAST(COMP_SPACE_SAVED_MB as FLOAT)/1024) as COMP_SAVED_GB, ((CAST(EST_CAPACITY_MB as FLOAT)/1024)*PCT_UTILIZED/100) as USED_SPACE_GB from stgpools where STG_TYPE='DIRECTORY' or STG_TYPE='CLOUD' order by TOTAL_SAVED_GB DESC > /tmp/Container_Space_savings.csv"
+        se: "{{ lookup('csvfile', 'Server file=credentials.csv delimiter=,') }}"
+        id: "{{ lookup('csvfile', 'ID file=credentials.csv delimiter=,') }}"
+        pa: "{{ lookup('csvfile', 'Password file=credentials.csv delimiter=,') }}"
+        dataonly: true
+        comma: true
+      register: output
+    - debug: 
+        msg: "{{output.stdout_lines}}"
+    - shell: " cat /tmp/Container_Space_savings.csv >> /tmp/Container_Space_savings_$(date +'%Y-%m-%d').csv "
+    - shell: " rm -rf /tmp/Container_Space_savings.csv "
