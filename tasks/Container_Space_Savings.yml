@@ -1,5 +1,9 @@
 ---
-    - shell: " rm -rf /tmp/Container_Space_savings.csv "
+    #- shell: " rm -rf /tmp/Container_Space_savings.csv "
+    - name: " Remove Temp file at end of Play"
+      file:
+        path: /tmp/Container_Space_savings.csv
+        state: absent
     - shell: " echo STGPOOL_NAME,TOTAL_SAVED_GB,DEDUP_SAVED_GB,COMP_SAVED_GB,USED_SPACE_GB > /tmp/Container_Space_savings_$(date +'%Y-%m-%d').csv"  
     - name: "To get Container Storage pool space savings"
       dsmadmc:
@@ -13,4 +17,8 @@
     - debug: 
         msg: "{{output.stdout_lines}}"
     - shell: " cat /tmp/Container_Space_savings.csv >> /tmp/Container_Space_savings_$(date +'%Y-%m-%d').csv "
-    - shell: " rm -rf /tmp/Container_Space_savings.csv "
+    - name: " Remove Temp file at end of Play"
+      file:
+        path: /tmp/Container_Space_savings.csv
+        state: absent    
+    #- shell: " rm -rf /tmp/Container_Space_savings.csv "

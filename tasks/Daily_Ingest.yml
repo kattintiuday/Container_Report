@@ -1,5 +1,9 @@
 ---
-    - shell: " rm -rf /tmp/dailyingest.csv "
+    #- shell: " rm -rf /tmp/dailyingest.csv "
+    - name: " Remove Temp file at end of Play"
+      file:
+        path: /tmp/dailyingest.csv
+        state: absent    
     - shell: " echo DATE,PROTECTED_GB,WRITTEN_GB,DEDUPSAVINGS_GB,COMPSAVINGS_GB,DEDUP_PCT,COMP_PCT > /tmp/Dailyingest_$(date +'%Y-%m-%d').csv"  
     - name: "To get Container Storage pool space savings"
       dsmadmc:
@@ -13,4 +17,8 @@
     - debug: 
         msg: "{{output.stdout_lines}}"
     - shell: " cat /tmp/dailyingest.csv >> /tmp/Dailyingest_$(date +'%Y-%m-%d').csv "
-    - shell: " rm -rf /tmp/dailyingest.csv "
+    - name: " Remove Temp file at end of Play"
+      file:
+        path: /tmp/dailyingest.csv
+        state: absent        
+    #- shell: " rm -rf /tmp/dailyingest.csv "

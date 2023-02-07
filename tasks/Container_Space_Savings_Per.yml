@@ -1,5 +1,9 @@
 ---
-    - shell: " rm -rf /tmp/Container_Space_savings_per.csv "
+    #- shell: " rm -rf /tmp/Container_Space_savings_per.csv "
+    - name: " Remove Temp file beining of Play"
+      file:
+        path: /tmp/Container_Space_savings_per.csv
+        state: absent
     - shell: " echo NAME,SPACE_SAVED_PCT,SPACE_SAVED_MB,USED_SPACE,DEDUP_SAVED_MB,DEDUP_SAVED_PCT,COMP_SAVED_MB,COMP_SAVED_PCT > /tmp/Container_Space_savings_Percentage_$(date +'%Y-%m-%d').csv"  
     - name: "To get Container Storage pool space savings With Percentage"
       dsmadmc:
@@ -13,4 +17,8 @@
     - debug: 
         msg: "{{output.stdout_lines}}"
     - shell: " cat /tmp/Container_Space_savings_per.csv >> /tmp/Container_Space_savings_Percentage_$(date +'%Y-%m-%d').csv "
-    - shell: " rm -rf /tmp/Container_Space_savings_per.csv "
+    - name: " Remove Temp file at end of Play"
+      file:
+        path: /tmp/Container_Space_savings_per.csv
+        state: absent
+    #- shell: " rm -rf /tmp/Container_Space_savings_per.csv "

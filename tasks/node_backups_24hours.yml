@@ -1,5 +1,9 @@
 ---
-    - shell: " rm -rf /tmp/nodebackups.csv "
+    #- shell: " rm -rf /tmp/nodebackups.csv "
+    - name: " Remove Temp file at end of Play"
+      file:
+        path: /tmp/nodebackups.csv
+        state: absent        
     - shell: " echo NODE_NAME,START_TIME,PROTECTED_MB,WRITTEN_MB,DEDUPSAVINGS_MB,COMPSAVINGS_MB,DEDUP_PCT > /tmp/Node_Container_Backups_$(date +'%Y-%m-%d').csv"  
     - name: "To get Container Storage pool space savings"
       dsmadmc:
@@ -13,4 +17,8 @@
     - debug: 
         msg: "{{output.stdout_lines}}"
     - shell: " cat /tmp/nodebackups.csv >> /tmp/Node_Container_Backups_$(date +'%Y-%m-%d').csv "
-    - shell: " rm -rf /tmp/nodebackups.csv "
+    - name: " Remove Temp file at end of Play"
+      file:
+        path: /tmp/nodebackups.csv
+        state: absent            
+    #- shell: " rm -rf /tmp/nodebackups.csv "
