@@ -4,7 +4,12 @@
       file:
         path: /tmp/Container_Space_savings.csv
         state: absent
-    - shell: " echo STGPOOL_NAME,TOTAL_SAVED_GB,DEDUP_SAVED_GB,COMP_SAVED_GB,USED_SPACE_GB > /tmp/Container_Space_savings_$(date +'%Y-%m-%d').csv"  
+    #- shell: " echo STGPOOL_NAME,TOTAL_SAVED_GB,DEDUP_SAVED_GB,COMP_SAVED_GB,USED_SPACE_GB > /tmp/Container_Space_savings_$(date +'%Y-%m-%d').csv"  
+    - name: " To Create File with current date "
+      lineinfile:
+        path: "/tmp/Container_Space_savings_{{ date }}.csv"
+        line: "STGPOOL_NAME,TOTAL_SAVED_GB,DEDUP_SAVED_GB,COMP_SAVED_GB,USED_SPACE_GB"
+        create: true             
     - name: "To get Container Storage pool space savings"
       dsmadmc:
         command: "select STGPOOL_NAME, (CAST(SPACE_SAVED_MB as FLOAT)/1024) as TOTAL_SAVED_GB, (CAST(DEDUP_SPACE_SAVED_MB as FLOAT)/1024) as DEDUP_SAVED_GB, (CAST(COMP_SPACE_SAVED_MB as FLOAT)/1024) as COMP_SAVED_GB, ((CAST(EST_CAPACITY_MB as FLOAT)/1024)*PCT_UTILIZED/100) as USED_SPACE_GB from stgpools where STG_TYPE='DIRECTORY' or STG_TYPE='CLOUD' order by TOTAL_SAVED_GB DESC > /tmp/Container_Space_savings.csv"
@@ -16,7 +21,9 @@
       register: output
     - debug: 
         msg: "{{output.stdout_lines}}"
-    - shell: " cat /tmp/Container_Space_savings.csv >> /tmp/Container_Space_savings_$(date +'%Y-%m-%d').csv "
+    #- shell: " cat /tmp/Container_Space_savings.csv >> /tmp/Container_Space_savings_$(date +'%Y-%m-%d').csv "
+    - name: " Append the output from temp to file "
+      lineinfile: path=/tmp/Container_Space_savings_{{ date }}.csv line={{lookup('file', '/tmp/Container_Space_savings.csv')}} create=yes state=present                    
     - name: " Remove Temp file at end of Play"
       file:
         path: /tmp/Container_Space_savings.csv
