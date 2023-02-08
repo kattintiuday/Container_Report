@@ -1,10 +1,8 @@
 ---
-    #- shell: " rm -rf /tmp/Container_Space_savings.csv "
     - name: " Remove Temp file at end of Play"
       file:
         path: /tmp/Container_Space_savings.csv
         state: absent
-    #- shell: " echo STGPOOL_NAME,TOTAL_SAVED_GB,DEDUP_SAVED_GB,COMP_SAVED_GB,USED_SPACE_GB > /tmp/Container_Space_savings_$(date +'%Y-%m-%d').csv"  
     - name: " To Create File with current date "
       lineinfile:
         path: "/tmp/Container_Space_savings_{{ date }}.csv"
@@ -21,11 +19,9 @@
       register: output
     - debug: 
         msg: "{{output.stdout_lines}}"
-    #- shell: " cat /tmp/Container_Space_savings.csv >> /tmp/Container_Space_savings_$(date +'%Y-%m-%d').csv "
     - name: " Append the output from temp to file "
       lineinfile: path=/tmp/Container_Space_savings_{{ date }}.csv line={{lookup('file', '/tmp/Container_Space_savings.csv')}} create=yes state=present                    
     - name: " Remove Temp file at end of Play"
       file:
         path: /tmp/Container_Space_savings.csv
         state: absent    
-    #- shell: " rm -rf /tmp/Container_Space_savings.csv "

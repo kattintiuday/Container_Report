@@ -1,10 +1,13 @@
 ---
-    #- shell: " rm -rf /tmp/nodebackups.csv "
     - name: " Remove Temp file at end of Play"
       file:
         path: /tmp/nodebackups.csv
         state: absent        
-    - shell: " echo NODE_NAME,START_TIME,PROTECTED_MB,WRITTEN_MB,DEDUPSAVINGS_MB,COMPSAVINGS_MB,DEDUP_PCT > /tmp/Node_Container_Backups_$(date +'%Y-%m-%d').csv"  
+    - name: " To Create File with current date "
+      lineinfile:
+        path: "/tmp/Node_Container_Backups__{{ date }}.csv"
+        line: "NODE_NAME,START_TIME,PROTECTED_MB,WRITTEN_MB,DEDUPSAVINGS_MB,COMPSAVINGS_MB,DEDUP_PCT"
+        create: true      
     - name: "To get Container Storage pool space savings"
       dsmadmc:
         command: "SELECT ENTITY as NODE_NAME, s.START_TIME, (CAST(FLOAT((s.bytes_protected))/1024/1024 AS DECIMAL(12,2))) AS PROTECTED_MB, (CAST(FLOAT((s.bytes_written))/1024/1024 AS DECIMAL(12,2))) AS WRITTEN_MB, (CAST(FLOAT((s.dedup_savings))/1024/1024 AS DECIMAL(12,2))) AS DEDUPSAVINGS_MB, (CAST(FLOAT((s.comp_savings))/1024/1024 AS DECIMAL(12,2))) AS COMPSAVINGS_MB, (CAST(FLOAT((s.dedup_savings))/FLOAT((s.bytes_protected))*100 AS DECIMAL(5,2))) AS DEDUP_PCT from summary s WHERE s.bytes_protected<>0 and (activity='BACKUP' or activity='ARCHIVE') and s.START_TIME>=(current_date - 1 days) order by s.start_time > /tmp/nodebackups.csv"
@@ -16,9 +19,9 @@
       register: output
     - debug: 
         msg: "{{output.stdout_lines}}"
-    - shell: " cat /tmp/nodebackups.csv >> /tmp/Node_Container_Backups_$(date +'%Y-%m-%d').csv "
+    - name: " Append the output from temp to file "
+      lineinfile: path=/tmp/Node_Container_Backups__{{ date }}.csv line={{lookup('file', '/tmp/nodebackups.csv')}} create=yes state=present                    
     - name: " Remove Temp file at end of Play"
       file:
         path: /tmp/nodebackups.csv
         state: absent            
-    #- shell: " rm -rf /tmp/nodebackups.csv "

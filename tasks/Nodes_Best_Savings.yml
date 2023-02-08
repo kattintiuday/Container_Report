@@ -1,10 +1,13 @@
 ---
-    #- shell: " rm -rf /tmp/nodebestsavings.csv "
     - name: " Remove Temp file at end of Play"
       file:
         path: /tmp/nodebestsavings.csv
         state: absent            
-    - shell: " echo NODE,PROTECTED_GB,DEDUPSAVINGS_GB,COMPSAVINGS_GB,OVERALL_SAVINGS_GB,OVERALL_SAVINGS_PCT > /tmp/Node_Best_Savings_$(date +'%Y-%m-%d').csv"  
+    - name: " To Create File with current date "
+      lineinfile:
+        path: "/tmp/Node_Best_Savings_{{ date }}.csv"
+        line: "NODE,PROTECTED_GB,DEDUPSAVINGS_GB,COMPSAVINGS_GB,OVERALL_SAVINGS_GB,OVERALL_SAVINGS_PCT"
+        create: true      
     - name: "To get Container Storage pool space savings"
       dsmadmc:
         command: "SELECT SUBSTR(s.ENTITY,1,20) AS NODE, (CAST(FLOAT(SUM(s.bytes_protected))/1024/1024/1024 AS DECIMAL(12,2))) AS PROTECTED_GB, (CAST(FLOAT(SUM(s.dedup_savings))/1024/1024/1024 AS DECIMAL(12,2))) AS DEDUPSAVINGS_GB, (CAST(FLOAT(SUM(s.comp_savings))/1024/1024/1024 AS DECIMAL(12,2))) AS COMPSAVINGS_GB, (CAST(FLOAT(SUM(s.comp_savings)+SUM(s.dedup_savings))/1024/1024/1024 AS DECIMAL(12,2))) AS OVERALL_SAVINGS_GB,COALESCE((CAST(FLOAT(SUM(s.dedup_savings)+SUM(s.comp_savings))/FLOAT(SUM(s.bytes_protected))*100 AS DECIMAL(5,2))),0) AS OVERALL_SAVINGS_PCT from summary_extended s WHERE activity='BACKUP' or activity='ARCHIVE' GROUP BY S.ENTITY ORDER BY OVERALL_SAVINGS_PCT DESC FETCH FIRST 20 ROWS ONLY > /tmp/nodebestsavings.csv"
@@ -16,9 +19,9 @@
       register: output
     - debug: 
         msg: "{{output.stdout_lines}}"
-    - shell: " cat /tmp/nodebestsavings.csv >> /tmp/Node_Best_Savings_$(date +'%Y-%m-%d').csv "
+    - name: " Append the output from temp to file "
+      lineinfile: path=/tmp/Node_Best_Savings_{{ date }}.csv line={{lookup('file', '/tmp/nodebestsavings.csv')}} create=yes state=present                    
     - name: " Remove Temp file at end of Play"
       file:
         path: /tmp/nodebestsavings.csv
         state: absent                
-    #- shell: " rm -rf /tmp/nodebestsavings.csv "
