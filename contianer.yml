@@ -1,6 +1,8 @@
 ---  
   - name: "Playing with Ansible and Git"
     hosts: "{{ execution_node }}"
+    vars:
+      date: "{{ lookup('pipe', 'date +%Y-%m-%d') }}"    
     ignore_errors: true
     tasks:
       - include: tasks/Container_Space_Savings.yml

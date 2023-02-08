@@ -4,7 +4,12 @@
       file:
         path: /tmp/Container_Space_savings_per.csv
         state: absent
-    - shell: " echo NAME,SPACE_SAVED_PCT,SPACE_SAVED_MB,USED_SPACE,DEDUP_SAVED_MB,DEDUP_SAVED_PCT,COMP_SAVED_MB,COMP_SAVED_PCT > /tmp/Container_Space_savings_Percentage_$(date +'%Y-%m-%d').csv"  
+    #- shell: " echo NAME,SPACE_SAVED_PCT,SPACE_SAVED_MB,USED_SPACE,DEDUP_SAVED_MB,DEDUP_SAVED_PCT,COMP_SAVED_MB,COMP_SAVED_PCT > /tmp/Container_Space_savings_Percentage_$(date +'%Y-%m-%d').csv"  
+    - name: " To Create File with current date "
+      lineinfile:
+        path: "/tmp/Container_Space_savings_Percentage_{{ date }}.csv"
+        line: "NAME,SPACE_SAVED_PCT,SPACE_SAVED_MB,USED_SPACE,DEDUP_SAVED_MB,DEDUP_SAVED_PCT,COMP_SAVED_MB,COMP_SAVED_PCT"
+        create: true  
     - name: "To get Container Storage pool space savings With Percentage"
       dsmadmc:
         command: " select name, SPACE_SAVED_PCT, SPACE_SAVED_MB, USED_SPACE, DEDUP_SAVED_MB, DEDUP_SAVED_PCT, COMP_SAVED_MB, COMP_SAVED_PCT from TSMGUI_ALLSTG_GRID where STG_TYPE=101 or STG_TYPE=100 order by SPACE_SAVED_PCT DESC > /tmp/Container_Space_savings_per.csv"
@@ -16,7 +21,9 @@
       register: output
     - debug: 
         msg: "{{output.stdout_lines}}"
-    - shell: " cat /tmp/Container_Space_savings_per.csv >> /tmp/Container_Space_savings_Percentage_$(date +'%Y-%m-%d').csv "
+    #- shell: " cat /tmp/Container_Space_savings_per.csv >> /tmp/Container_Space_savings_Percentage_$(date +'%Y-%m-%d').csv "
+    - name: " Append the output from temp to file "
+      lineinfile: path=/tmp/Container_Space_savings_Percentage_{{ date }}.csv line={{lookup('file', '/tmp/Container_Space_savings_per.csv')}} create=yes state=present                
     - name: " Remove Temp file at end of Play"
       file:
         path: /tmp/Container_Space_savings_per.csv
