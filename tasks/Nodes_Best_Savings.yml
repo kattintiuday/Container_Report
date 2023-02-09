@@ -11,9 +11,9 @@
     - name: "To get Container Storage pool space savings"
       dsmadmc:
         command: "SELECT SUBSTR(s.ENTITY,1,20) AS NODE, (CAST(FLOAT(SUM(s.bytes_protected))/1024/1024/1024 AS DECIMAL(12,2))) AS PROTECTED_GB, (CAST(FLOAT(SUM(s.dedup_savings))/1024/1024/1024 AS DECIMAL(12,2))) AS DEDUPSAVINGS_GB, (CAST(FLOAT(SUM(s.comp_savings))/1024/1024/1024 AS DECIMAL(12,2))) AS COMPSAVINGS_GB, (CAST(FLOAT(SUM(s.comp_savings)+SUM(s.dedup_savings))/1024/1024/1024 AS DECIMAL(12,2))) AS OVERALL_SAVINGS_GB,COALESCE((CAST(FLOAT(SUM(s.dedup_savings)+SUM(s.comp_savings))/FLOAT(SUM(s.bytes_protected))*100 AS DECIMAL(5,2))),0) AS OVERALL_SAVINGS_PCT from summary_extended s WHERE activity='BACKUP' or activity='ARCHIVE' GROUP BY S.ENTITY ORDER BY OVERALL_SAVINGS_PCT DESC FETCH FIRST 20 ROWS ONLY > /tmp/nodebestsavings.csv"
-        se: "{{ lookup('csvfile', 'Server file=credentials.csv delimiter=,') }}"
-        id: "{{ lookup('csvfile', 'ID file=credentials.csv delimiter=,') }}"
-        pa: "{{ lookup('csvfile', 'Password file=credentials.csv delimiter=,') }}"
+        se: "{{ tsm_server_node }}"
+        id: "{{ tsm_app_user }}"
+        pa: "{{ tsm_app_password }}"
         dataonly: true
         comma: true
       register: output
