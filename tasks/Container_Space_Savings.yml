@@ -21,8 +21,9 @@
         msg: "{{output.stdout_lines}}"
     - name: " Append the output from temp to file "
       shell: " ls -lrt /tmp/*"
+      register: output1
       debug:
-        msg: "{{output.stdout_lines}}"
+        msg: "{{output1.stdout_lines}}"
       lineinfile: path=/tmp/Container_Space_savings_{{ date }}.csv line={{lookup('file', '/tmp/Container_Space_savings.csv')}} create=yes state=present
     #- name: " Remove Temp file at end of Play"
     #  file:
