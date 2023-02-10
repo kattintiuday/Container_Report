@@ -21,7 +21,7 @@
         msg: "{{output.stdout_lines}}"
     - name: " Append the output from temp to file "
       lineinfile: path=/tmp/Container_Space_savings_{{ date }}.csv line={{lookup('file', '/tmp/Container_Space_savings.csv')}} create=yes state=present                    
-    - name: " Remove Temp file at end of Play"
+    #- name: " Remove Temp file at end of Play"
       file:
         path: /tmp/Container_Space_savings.csv
         state: absent    
