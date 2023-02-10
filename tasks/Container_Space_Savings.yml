@@ -20,7 +20,7 @@
     - debug: 
         msg: "{{output.stdout_lines}}"
     - name: " Append the output from temp to file "
-      shell: " ls -lrt /tmp/*"
+      command: " ls -lrt /tmp/*"
       register: output1
       debug:
         msg: "{{output1.stdout_lines}}"
