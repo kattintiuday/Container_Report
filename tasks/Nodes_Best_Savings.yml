@@ -19,8 +19,16 @@
       register: output
     - debug: 
         msg: "{{output.stdout_lines}}"
-    - name: " Append the output from temp to file "
-      lineinfile: path=/tmp/Node_Best_Savings_{{ date }}.csv line={{lookup('file', '/tmp/nodebestsavings.csv')}} create=yes state=present                    
+    - name: Read data from Tempfile
+      slurp:
+        src: "{{ tempcontainer }}"
+      register: file1_data
+    - name: Append data to Final file
+      lineinfile:
+        path: /tmp/Node_Best_Savings_{{ date }}.csv
+        line: "{{ item }}"
+        create: yes
+      with_items: "{{ file1_data['content'] | b64decode }}"                           
     - name: " Remove Temp file at end of Play"
       file:
         path: "{{ tempcontainer }}"

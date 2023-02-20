@@ -19,11 +19,11 @@
       register: output
     - debug: 
         msg: "{{output.stdout_lines}}"
-    - name: Read data from file1.csv
+    - name: Read data from Tempfile
       slurp:
         src: "{{ tempcontainer }}"
       register: file1_data
-    - name: Append data to file2.csv
+    - name: Append data to Final file
       lineinfile:
         path: /tmp/Container_Space_savings_{{ date }}.csv
         line: "{{ item }}"
