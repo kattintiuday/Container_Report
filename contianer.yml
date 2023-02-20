@@ -1,7 +1,7 @@
 ---  
   - name: "Playing with Ansible and Git"
     hosts: "{{ execution_node }}"
-    become_true: yes
+    become: yes
     vars:
       date: "{{ lookup('pipe', 'date +%Y-%m-%d') }}" 
       tempcontainer: /tmp/container_temp.csv
