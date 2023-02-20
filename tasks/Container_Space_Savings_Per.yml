@@ -1,8 +1,6 @@
 ---
-    - name: " Remove Temp file beining of Play"
-      file:
-        path: "{{ tempcontainer }}"
-        state: absent
+    #- name: " Remove Temp file beining of Play"
+    - include_tasks: tasks/removetemp.yml
     - name: " To Create File with current date "
       lineinfile:
         path: "{{ reportdir }}/Container_Space_savings_Percentage_{{ date }}.csv"
@@ -29,7 +27,5 @@
         line: "{{ item }}"
         create: yes
       with_items: "{{ file1_data['content'] | b64decode }}"                                   
-    - name: " Remove Temp file at end of Play"
-      file:
-        path: "{{ tempcontainer }}"
-        state: absent
+    #- name: " Remove Temp file beining of Play"
+    - include_tasks: tasks/removetemp.yml
