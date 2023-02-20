@@ -5,7 +5,7 @@
         state: absent
     - name: " To Create File with current date "
       lineinfile:
-        path: " {{ reportdir }}/Container_Space_savings_{{ date }}.csv"
+        path: "{{ reportdir }}/Container_Space_savings_{{ date }}.csv"
         line: "STGPOOL_NAME,TOTAL_SAVED_GB,DEDUP_SAVED_GB,COMP_SAVED_GB,USED_SPACE_GB"
         create: true             
     - name: "To get Container Storage pool space savings"
@@ -25,7 +25,7 @@
       register: file1_data
     - name: Append data to Final file
       lineinfile:
-        path: " {{ reportdir }}/Container_Space_savings_{{ date }}.csv "
+        path: "{{ reportdir }}/Container_Space_savings_{{ date }}.csv"
         line: "{{ item }}"
         create: yes
       with_items: "{{ file1_data['content'] | b64decode }}"   
