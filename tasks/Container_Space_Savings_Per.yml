@@ -5,7 +5,7 @@
         state: absent
     - name: " To Create File with current date "
       lineinfile:
-        path: "/tmp/Container_Space_savings_Percentage_{{ date }}.csv"
+        path: "/SP_Contianer_Reports/Container_Space_savings_Percentage_{{ date }}.csv"
         line: "NAME,SPACE_SAVED_PCT,SPACE_SAVED_MB,USED_SPACE,DEDUP_SAVED_MB,DEDUP_SAVED_PCT,COMP_SAVED_MB,COMP_SAVED_PCT"
         create: true  
     - name: "To get Container Storage pool space savings With Percentage"
@@ -25,7 +25,7 @@
       register: file1_data
     - name: Append data to Final file
       lineinfile:
-        path: /tmp/Container_Space_savings_Percentage_{{ date }}.csv
+        path: /SP_Contianer_Reports/Container_Space_savings_Percentage_{{ date }}.csv
         line: "{{ item }}"
         create: yes
       with_items: "{{ file1_data['content'] | b64decode }}"                                   
