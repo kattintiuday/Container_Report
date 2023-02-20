@@ -5,6 +5,7 @@
     vars:
       date: "{{ lookup('pipe', 'date +%Y-%m-%d') }}" 
       tempcontainer: /tmp/container_temp.csv
+      reportdir: /SP_CONTAINER_REPORTS
     ignore_errors: true
     tasks:
       - include: tasks/Container_Space_Savings.yml
