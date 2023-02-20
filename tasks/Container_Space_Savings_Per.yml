@@ -1,7 +1,7 @@
 ---
     - name: " Remove Temp file beining of Play"
       file:
-        path: /tmp/Container_Space_savings_per.csv
+        path: "{{ tempcontainer }}"
         state: absent
     - name: " To Create File with current date "
       lineinfile:
@@ -10,7 +10,7 @@
         create: true  
     - name: "To get Container Storage pool space savings With Percentage"
       dsmadmc:
-        command: " select name, SPACE_SAVED_PCT, SPACE_SAVED_MB, USED_SPACE, DEDUP_SAVED_MB, DEDUP_SAVED_PCT, COMP_SAVED_MB, COMP_SAVED_PCT from TSMGUI_ALLSTG_GRID where STG_TYPE=101 or STG_TYPE=100 order by SPACE_SAVED_PCT DESC > /tmp/Container_Space_savings_per.csv"
+        command: " select name, SPACE_SAVED_PCT, SPACE_SAVED_MB, USED_SPACE, DEDUP_SAVED_MB, DEDUP_SAVED_PCT, COMP_SAVED_MB, COMP_SAVED_PCT from TSMGUI_ALLSTG_GRID where STG_TYPE=101 or STG_TYPE=100 order by SPACE_SAVED_PCT DESC > {{ tempcontainer }}"
         se: "{{ lookup('env', 'tsm_server_node') }}"
         id: "{{ lookup('env', 'tsm_app_user') }}"
         pa: "{{ lookup('env', 'tsm_app_password') }}"
@@ -23,5 +23,5 @@
       lineinfile: path=/tmp/Container_Space_savings_Percentage_{{ date }}.csv line={{lookup('file', '/tmp/Container_Space_savings_per.csv')}} create=yes state=present                
     - name: " Remove Temp file at end of Play"
       file:
-        path: /tmp/Container_Space_savings_per.csv
+        path: "{{ tempcontainer }}"
         state: absent
