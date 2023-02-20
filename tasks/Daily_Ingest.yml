@@ -16,10 +16,7 @@
       register: output
     - debug: 
         msg: "{{output.stdout_lines}}"
-    - name: Read data from Tempfile
-      slurp:
-        src: "{{ tempcontainer }}"
-      register: file1_data
+    - include_tasks: tasks/readtempfile.yml
     - name: Append data to Final file
       lineinfile:
         path: "{{ reportdir }}/dailyingest_{{ date }}.csv"

@@ -1,0 +1,5 @@
+---   
+  - name: Read data from Tempfile
+    slurp:
+      src: "{{ tempcontainer }}"
+    register: file1_data
