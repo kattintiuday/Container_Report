@@ -1,7 +1,7 @@
 ---
     - name: " Remove Temp file at end of Play"
       file:
-        path: /tmp/Container_Space_savings.csv
+        path: "{{ tempcontainer }}"
         state: absent
     - name: " To Create File with current date "
       lineinfile:
@@ -10,7 +10,7 @@
         create: true             
     - name: "To get Container Storage pool space savings"
       dsmadmc:
-        command: "select STGPOOL_NAME, (CAST(SPACE_SAVED_MB as FLOAT)/1024) as TOTAL_SAVED_GB, (CAST(DEDUP_SPACE_SAVED_MB as FLOAT)/1024) as DEDUP_SAVED_GB, (CAST(COMP_SPACE_SAVED_MB as FLOAT)/1024) as COMP_SAVED_GB, ((CAST(EST_CAPACITY_MB as FLOAT)/1024)*PCT_UTILIZED/100) as USED_SPACE_GB from stgpools where STG_TYPE='DIRECTORY' or STG_TYPE='CLOUD' order by TOTAL_SAVED_GB DESC > /tmp/Container_Space_savings.csv"
+        command: "select STGPOOL_NAME, (CAST(SPACE_SAVED_MB as FLOAT)/1024) as TOTAL_SAVED_GB, (CAST(DEDUP_SPACE_SAVED_MB as FLOAT)/1024) as DEDUP_SAVED_GB, (CAST(COMP_SPACE_SAVED_MB as FLOAT)/1024) as COMP_SAVED_GB, ((CAST(EST_CAPACITY_MB as FLOAT)/1024)*PCT_UTILIZED/100) as USED_SPACE_GB from stgpools where STG_TYPE='DIRECTORY' or STG_TYPE='CLOUD' order by TOTAL_SAVED_GB DESC > {{ tempcontainer }} "
         se: "{{ lookup('env', 'tsm_server_node') }}"
         id: "{{ lookup('env', 'tsm_app_user') }}"
         pa: "{{ lookup('env', 'tsm_app_password') }}"
@@ -19,26 +19,17 @@
       register: output
     - debug: 
         msg: "{{output.stdout_lines}}"
-    #- name: " Append the output from temp to file "
-    #  lineinfile: path=/tmp/Container_Space_savings_{{ date }}.csv line="{{lookup('file', '/tmp/Container_Space_savings.csv' , wantlist=True )}}" create=yes state=present
-    #- name: Add contents of file1.txt to file2.txt
-    #  lineinfile:
-    #    line: '{{ lookup("file", "/tmp/Container_Space_savings.csv") }}'
-    #    dest: /tmp/Container_Space_savings_{{ date }}.csv
-    #    insertafter: EOF
     - name: Read data from file1.csv
       slurp:
-        src: /tmp/Container_Space_savings.csv
+        src: "{{ tempcontainer }}"
       register: file1_data
-
     - name: Append data to file2.csv
       lineinfile:
         path: /tmp/Container_Space_savings_{{ date }}.csv
         line: "{{ item }}"
         create: yes
       with_items: "{{ file1_data['content'] | b64decode }}"   
-       
     - name: " Remove Temp file at end of Play"
       file:
-        path: /tmp/Container_Space_savings.csv
+        path: "{{ tempcontainer }}"
         state: absent    

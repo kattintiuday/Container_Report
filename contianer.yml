@@ -3,6 +3,7 @@
     hosts: "{{ execution_node }}"
     vars:
       date: "{{ lookup('pipe', 'date +%Y-%m-%d') }}" 
+      tempcontainer: /tmp/container_temp.csv
     ignore_errors: true
     tasks:
       - include: tasks/Container_Space_Savings.yml
