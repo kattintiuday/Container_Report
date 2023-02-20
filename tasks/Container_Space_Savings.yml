@@ -21,11 +21,23 @@
         msg: "{{output.stdout_lines}}"
     #- name: " Append the output from temp to file "
     #  lineinfile: path=/tmp/Container_Space_savings_{{ date }}.csv line="{{lookup('file', '/tmp/Container_Space_savings.csv' , wantlist=True )}}" create=yes state=present
-    - name: Add contents of file1.txt to file2.txt
+    #- name: Add contents of file1.txt to file2.txt
+    #  lineinfile:
+    #    line: '{{ lookup("file", "/tmp/Container_Space_savings.csv") }}'
+    #    dest: /tmp/Container_Space_savings_{{ date }}.csv
+    #    insertafter: EOF
+    - name: Read data from file1.csv
+      slurp:
+        src: /tmp/Container_Space_savings.csv
+      register: file1_data
+
+    - name: Append data to file2.csv
       lineinfile:
-        line: '{{ lookup("file", "/tmp/Container_Space_savings.csv") }}'
-        dest: /tmp/Container_Space_savings_{{ date }}.csv
-        insertafter: EOF
+        path: /tmp/Container_Space_savings_{{ date }}.csv
+        line: "{{ item }}"
+        create: yes
+      with_items: "{{ file1_data['content'] | b64decode }}"   
+       
     - name: " Remove Temp file at end of Play"
       file:
         path: /tmp/Container_Space_savings.csv
