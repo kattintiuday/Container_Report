@@ -1,5 +1,4 @@
 ---
-    #- name: " Remove Temp file beining of Play"
     - include_tasks: tasks/removetemp.yml
     - name: " To Create File with current date "
       lineinfile:
@@ -27,5 +26,4 @@
         line: "{{ item }}"
         create: yes
       with_items: "{{ file1_data['content'] | b64decode }}"                                   
-    #- name: " Remove Temp file beining of Play"
     - include_tasks: tasks/removetemp.yml
