@@ -21,7 +21,6 @@
       lineinfile:
         path: "{{ reportdir }}/Node_Container_Backups__{{ date }}.csv"
         line: "{{ item }}"
-        check_mode: yes
         create: yes
       with_items: "{{ file1_data['content'] | b64decode }}"                   
     - include_tasks: tasks/removetemp.yml     
