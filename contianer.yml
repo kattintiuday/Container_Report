@@ -6,8 +6,11 @@
       date: "{{ lookup('pipe', 'date +%Y-%m-%d') }}" 
       tempcontainer: /tmp/container_temp.csv
       reportdir: /SP_CONTAINER_REPORTS
+      archivedir: /SP_CONTAINER_REPORTS/Archives/
     ignore_errors: true
     tasks:
+      - include: tasks/archivereports.yml
+
       - include: tasks/Container_Space_Savings.yml
 
       - include: tasks/Container_Space_Savings_Per.yml
@@ -17,3 +20,5 @@
       - include: tasks/Daily_Ingest.yml
 
       - include: tasks/Nodes_Best_Savings.yml
+
+      - include: tasks/removearchives.yml
