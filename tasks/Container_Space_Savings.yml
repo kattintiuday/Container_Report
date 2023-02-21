@@ -17,11 +17,10 @@
     - debug: 
         msg: "{{output.stdout_lines}}"
     - include_tasks: tasks/readtempfile.yml
-    - name: Append data to Final file
+    - name: Append data to Final Report
       lineinfile:
         path: "{{ reportdir }}/Container_Space_savings_{{ date }}.csv"
         line: "{{ item }}"
-        check_mode: yes
         create: yes
       with_items: "{{ file1_data['content'] | b64decode }}"   
     - include_tasks: tasks/removetemp.yml 

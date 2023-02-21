@@ -21,7 +21,6 @@
       lineinfile:
         path: "{{ reportdir }}/Container_Space_savings_Percentage_{{ date }}.csv"
         line: "{{ item }}"
-        check_mode: yes
         create: yes
       with_items: "{{ file1_data['content'] | b64decode }}"                                   
     - include_tasks: tasks/removetemp.yml
