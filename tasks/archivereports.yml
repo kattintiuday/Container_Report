@@ -11,5 +11,5 @@
     file:
       src: "{{ item.path }}"
       dest: "{{ archivedir }}"
-      state: hard
+      state: link
     with_items: "{{ csv_files_to_move.files }}"
