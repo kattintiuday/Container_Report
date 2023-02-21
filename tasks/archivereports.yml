@@ -13,3 +13,10 @@
       dest: "{{ archivedir }}"
       state: hard
     with_items: "{{ csv_files_to_move.files }}"
+
+  - name: Move CSV files to archives directory
+    file:
+      src: "{{ item.path }}"
+      dest: "{{ archivedir }}"
+      state: absent
+    with_items: "{{ csv_files_to_move.files }}"  
