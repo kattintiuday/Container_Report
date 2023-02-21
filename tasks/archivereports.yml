@@ -4,7 +4,7 @@
     paths: /SP_CONTAINER_REPORTS
     patterns: "*.csv*"
     age: 1d
-    type: f
+    file_type: file
   register: csv_files_to_move
 
 - name: Move CSV files to archives directory
