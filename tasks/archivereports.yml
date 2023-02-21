@@ -16,6 +16,6 @@
 
   - name: Move CSV files to archives directory
     file:
-      src: "{{ item.path }}"
+      path: "{{ item.path }}"
       state: absent
     with_items: "{{ csv_files_to_move.files }}"  
