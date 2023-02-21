@@ -2,11 +2,11 @@
   - name: "Playing with Ansible and Git"
     hosts: "{{ execution_node }}"
     become: yes
-    vars:
-      date: "{{ lookup('pipe', 'date +%Y-%m-%d') }}" 
-      tempcontainer: /tmp/container_temp.csv
-      reportdir: /SP_CONTAINER_REPORTS
-      archivedir: /SP_CONTAINER_REPORTS/Archives/
+    #vars:
+    #  date: "{{ lookup('pipe', 'date +%Y-%m-%d') }}" 
+    #  tempcontainer: /tmp/container_temp.csv
+    #  reportdir: /SP_CONTAINER_REPORTS
+    #  archivedir: /SP_CONTAINER_REPORTS/Archives/
     ignore_errors: true
     tasks:
       - include: tasks/archivereports.yml
