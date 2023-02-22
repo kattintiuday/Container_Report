@@ -14,7 +14,7 @@
       state: hard
     with_items: "{{ csv_files_to_move.files }}"
 
-  - name: Move CSV files to archives directory
+  - name: Remove the CSV files older than 1 day 
     file:
       path: "{{ item.path }}"
       state: absent
