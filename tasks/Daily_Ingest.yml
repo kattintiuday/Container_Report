@@ -5,7 +5,7 @@
         path: "{{ reportdir }}/dailyingest_{{ date }}.csv"
         line: "DATE,PROTECTED_GB,WRITTEN_GB,DEDUPSAVINGS_GB,COMPSAVINGS_GB,DEDUP_PCT,COMP_PCT"
         create: true                 
-    - name: "To get Container Storage pool space savings"
+    - name: "To get Container Daily Ingest"
       dsmadmc:
         command: "SELECT DATE(s.START_TIME) AS Date, (CAST(FLOAT(SUM(s.bytes_protected))/1024/1024/1024 AS DECIMAL(12,2))) AS PROTECTED_GB, (CAST(FLOAT(SUM(s.bytes_written))/1024/1024/1024 AS DECIMAL(12,2))) AS WRITTEN_GB, (CAST(FLOAT(SUM(s.dedup_savings))/1024/1024/1024 AS DECIMAL(12,2))) AS DEDUPSAVINGS_GB, (CAST(FLOAT(SUM(s.comp_savings))/1024/1024/1024 AS DECIMAL(12,2))) AS COMPSAVINGS_GB, (CAST(FLOAT(SUM(s.dedup_savings))/FLOAT(SUM(s.bytes_protected))*100 AS DECIMAL(5,2))) AS DEDUP_PCT, (CAST(FLOAT(SUM(s.comp_savings))/FLOAT(SUM(s.bytes_protected)-SUM(s.dedup_savings))*100 AS DECIMAL(5,2))) AS COMP_PCT from summary s WHERE activity='BACKUP' or activity='ARCHIVE' GROUP BY DATE(S.START_TIME) ORDER BY DATE DESC > {{ tempcontainer }}"
         se: "{{ lookup('env', 'tsm_server_node') }}"

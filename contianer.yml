@@ -1,5 +1,5 @@
 ---  
-  - name: "Playing with Ansible and Git"
+  - name: "Spectrum Protect Container Reporting"
     hosts: "{{ execution_node }}"
     become: yes
     vars:
