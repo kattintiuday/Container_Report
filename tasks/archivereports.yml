@@ -1,7 +1,7 @@
 ---
   - name: Move CSV files older than 1 day to archives directory
     find:
-      paths: /SP_CONTAINER_REPORTS
+      paths: "{{ reportdir }}"
       patterns: "*.csv*"
       age: 1d
       file_type: file
