@@ -2,7 +2,7 @@
     - include_tasks: tasks/removetemp.yml
     - name: " To Create File with current date "
       lineinfile:
-        path: "{{ reportdir }}/dailyingest_{{ date }}.csv"
+        path: "{{ reportdir }}/{{ lookup('env', 'tsm_server_node') }}_dailyingest_{{ date }}.csv"
         line: "DATE,PROTECTED_GB,WRITTEN_GB,DEDUPSAVINGS_GB,COMPSAVINGS_GB,DEDUP_PCT,COMP_PCT"
         create: true                 
     - name: "To get Container Daily Ingest"
@@ -19,7 +19,7 @@
     - include_tasks: tasks/readtempfile.yml
     - name: Append data to Final file
       lineinfile:
-        path: "{{ reportdir }}/dailyingest_{{ date }}.csv"
+        path: "{{ reportdir }}/{{ lookup('env', 'tsm_server_node') }}_dailyingest_{{ date }}.csv"
         line: "{{ item }}"
         create: yes
       with_items: "{{ file1_data['content'] | b64decode }}"           

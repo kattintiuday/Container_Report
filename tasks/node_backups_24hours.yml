@@ -2,7 +2,7 @@
     - include_tasks: tasks/removetemp.yml    
     - name: " To Create File with current date "
       lineinfile:
-        path: "{{ reportdir }}/Node_Container_Backups__{{ date }}.csv"
+        path: "{{ reportdir }}/{{ lookup('env', 'tsm_server_node') }}_Node_Container_Backups__{{ date }}.csv"
         line: "NODE_NAME,START_TIME,PROTECTED_MB,WRITTEN_MB,DEDUPSAVINGS_MB,COMPSAVINGS_MB,DEDUP_PCT"
         create: true      
     - name: "To get Container Node Bakcups 24hours status"
@@ -19,7 +19,7 @@
     - include_tasks: tasks/readtempfile.yml
     - name: Append data to Final file
       lineinfile:
-        path: "{{ reportdir }}/Node_Container_Backups__{{ date }}.csv"
+        path: "{{ reportdir }}/{{ lookup('env', 'tsm_server_node') }}_Node_Container_Backups__{{ date }}.csv"
         line: "{{ item }}"
         create: yes
       with_items: "{{ file1_data['content'] | b64decode }}"                   

@@ -2,7 +2,7 @@
     - include_tasks: tasks/removetemp.yml      
     - name: " To Create File with current date "
       lineinfile:
-        path: "{{ reportdir }}/Node_Best_Savings_{{ date }}.csv"
+        path: "{{ reportdir }}/{{ lookup('env', 'tsm_server_node') }}_Node_Best_Savings_{{ date }}.csv"
         line: "NODE,PROTECTED_GB,DEDUPSAVINGS_GB,COMPSAVINGS_GB,OVERALL_SAVINGS_GB,OVERALL_SAVINGS_PCT"
         create: true      
     - name: "To get Container Node Best Savings"
@@ -19,7 +19,7 @@
     - include_tasks: tasks/readtempfile.yml
     - name: Append data to Final file
       lineinfile:
-        path: "{{ reportdir }}/Node_Best_Savings_{{ date }}.csv"
+        path: "{{ reportdir }}/{{ lookup('env', 'tsm_server_node') }}_Node_Best_Savings_{{ date }}.csv"
         line: "{{ item }}"
         create: yes
       with_items: "{{ file1_data['content'] | b64decode }}"                           
