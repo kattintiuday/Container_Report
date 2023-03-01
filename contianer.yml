@@ -21,4 +21,4 @@
 
       #- include: tasks/Nodes_Best_Savings.yml
 
-      #- include: tasks/removearchives.yml
+      - include: tasks/removearchives.yml
